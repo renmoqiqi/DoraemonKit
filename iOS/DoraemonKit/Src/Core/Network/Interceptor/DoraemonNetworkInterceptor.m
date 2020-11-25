@@ -13,6 +13,7 @@
 #import "DoraemonNetFlowHttpModel.h"
 #import "DoraemonResponseImageModel.h"
 #import "DoraemonDefine.h"
+#import "NSURLProtocol+WebKitSupport.h"
 
 static DoraemonNetworkInterceptor *instance = nil;
 
@@ -83,9 +84,15 @@ static DoraemonNetworkInterceptor *instance = nil;
 
 - (void)updateURLProtocolInterceptStatus {
     if (self.shouldIntercept) {
+        for (NSString* scheme in @[@"http", @"https"]) {
+            [NSURLProtocol wk_registerScheme:scheme];
+        }
         [NSURLProtocol registerClass:[DoraemonNSURLProtocol class]];
     }else{
         [NSURLProtocol unregisterClass:[DoraemonNSURLProtocol class]];
+        for (NSString* scheme in @[@"http", @"https"]) {
+            [NSURLProtocol wk_unregisterScheme:scheme];
+        }
     }
 }
 
